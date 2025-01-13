@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -13,12 +12,12 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-public class UserController {
+public class UserDaoController {
 
     @Autowired
     private UserDaoService userDaoService;
 
-    public UserController(UserDaoService userDaoService){
+    public UserDaoController(UserDaoService userDaoService){
         this.userDaoService = userDaoService;
     }
 
