@@ -1,5 +1,6 @@
 package com.mahin.restful.restfulApi.users;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mahin.restful.restfulApi.posts.Post;
 import jakarta.persistence.Entity;
@@ -26,6 +27,7 @@ public class User {
     private LocalDate birthDate;
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Post> posts;
 
     public User(){}

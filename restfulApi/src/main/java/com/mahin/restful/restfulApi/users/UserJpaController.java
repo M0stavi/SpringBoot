@@ -1,6 +1,7 @@
 package com.mahin.restful.restfulApi.users;
 
 import com.mahin.restful.restfulApi.posts.Post;
+import com.mahin.restful.restfulApi.posts.PostJpaRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
@@ -21,9 +22,13 @@ public class UserJpaController {
     @Autowired
     private UserRepository userRepository;
 
-    public UserJpaController(UserDaoService userDaoService, UserRepository userRepository){
+    @Autowired
+    private PostJpaRepository postJpaRepository;
+
+    public UserJpaController(UserDaoService userDaoService, UserRepository userRepository, PostJpaRepository postJpaRepository){
         this.userDaoService = userDaoService;
         this.userRepository = userRepository;
+        this.postJpaRepository = postJpaRepository;
     }
 
     @GetMapping(path = "/jpa/users")
@@ -77,7 +82,29 @@ public class UserJpaController {
             throw new UserNotFoundException("Id: "+id);
         }
         else {
-            Post createdPost = 
+            post.setUser(user.get());
+            System.out.println(post.getId());
+            Post createdPost = postJpaRepository.save(post);
+            URI location = ServletUriComponentsBuilder.fromCurrentRequest().
+                    path("/{id}").buildAndExpand(createdPost.getId()).toUri();
+            return ResponseEntity.created(location).build();
         }
     }
+
+//    @DeleteMapping(path = "/jpa/users/{id}/posts/{id}")
+//    public ResponseEntity<Object> createPostOfUSer(@PathVariable Integer userId, @PathVariable Integer postId,
+//                                                   @Valid @RequestBody Post post){
+//        Optional<User> user = userRepository.findById(id);
+//        if (user.isEmpty()){
+//            throw new UserNotFoundException("Id: "+id);
+//        }
+//        else {
+//            post.setUser(user.get());
+//            System.out.println(post.getId());
+//            Post createdPost = postJpaRepository.save(post);
+//            URI location = ServletUriComponentsBuilder.fromCurrentRequest().
+//                    path("/{id}").buildAndExpand(createdPost.getId()).toUri();
+//            return ResponseEntity.created(location).build();
+//        }
+//    }
 }
