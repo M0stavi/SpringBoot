@@ -1,11 +1,10 @@
 package com.mahin.banking.exception;
 
-import com.mahin.banking.exception.curtomer.CustomerNotFoundException;
+import com.mahin.banking.exception.customer.CustomerNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.Nullable;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,6 +24,14 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(CustomerNotFoundException.class)
+    public ResponseEntity handleCustomerNotFoundException(Exception ex, WebRequest request){
+        System.out.println("Inside customer not found exep");
+        ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
     }
 
     @Override

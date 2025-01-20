@@ -2,6 +2,7 @@ package com.mahin.banking.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
 
@@ -14,16 +15,16 @@ public class Customer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull(message = "customer name cannot be null")
     @Size(min = 2, message = "Name must contain at least 2 characters")
-    @Column(nullable = false)
     private String name;
 
+    @NotNull(message = "Customer message cannot be null")
     @Size(min = 2, message = "address must contain at least 2 characters")
-    @Column(nullable = false)
     private String address;
 
+    @NotNull(message = "customer birth date cannot be null")
     @Past(message = "birthDate must be in the past")
-    @Column(nullable = false)
     private LocalDate birthDate;
 
     @OneToMany(mappedBy = "customer")
