@@ -3,6 +3,7 @@ package com.mahin.banking.controller;
 import com.mahin.banking.entity.Account;
 import com.mahin.banking.entity.Customer;
 import com.mahin.banking.exception.account.AccountNotFoundException;
+import com.mahin.banking.exception.account.DuplicateAccountNumberException;
 import com.mahin.banking.exception.customer.CustomerNotFoundException;
 import com.mahin.banking.repository.AccountJpaRepository;
 import com.mahin.banking.repository.CustomerJpaRepository;
@@ -39,6 +40,10 @@ public class AccountController {
             throw new CustomerNotFoundException("id: "+id);
         else {
             account.setCustomer(retrievedCustomer.get());
+            for (Account newAccount:accountJpaRepository.findAll()){
+                if (newAccount.getAccountNumber() == account.getAccountNumber())
+                    throw new DuplicateAccountNumberException("account no: "+account.getAccountNumber());
+            }
             accountJpaRepository.save(account);
             URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").
                     buildAndExpand(account.getId()).toUri();
@@ -77,4 +82,42 @@ public class AccountController {
         }
 
     }
+
+    @PutMapping("/customers/{customerId}/accounts/{accountNumber}")
+    public ResponseEntity<Object> editAccountInfo(@Valid @PathVariable Integer customerId, @Valid @PathVariable Long accountNumber,
+                                                  @RequestBody Account account){
+        Optional<Customer> retrievedCustomer = customerJpaRepository.findById(customerId);
+        if (retrievedCustomer.isEmpty())
+            throw new CustomerNotFoundException("id: "+ customerId);
+        else {
+            for (Account customerAccount:retrievedCustomer.get().getAccountList()){
+                if (customerAccount.getAccountNumber() == accountNumber){
+                    customerAccount.setBalance(account.getBalance());
+                    URI location = ServletUriComponentsBuilder.fromCurrentRequest().buildAndExpand().toUri();
+                    return ResponseEntity.created(location).build();
+                }
+            }
+            throw new AccountNotFoundException("account number: "+accountNumber);
+        }
+    }
+
+    @DeleteMapping("/customers/{customerId}/accounts/{accountNumber}")
+    public ResponseEntity<Object> deleteCustomerAccount(@Valid @PathVariable Integer customerId,
+                                                        @Valid @PathVariable Long accountNumber){
+        Optional<Customer> retrievedCustomer = customerJpaRepository.findById(customerId);
+        if (retrievedCustomer.isEmpty())
+            throw new CustomerNotFoundException("id: "+customerId);
+        else {
+            for (Account account:retrievedCustomer.get().getAccountList()){
+                if (account.getAccountNumber() == accountNumber){
+                    Account deletedAccount = accountJpaRepository.findById(account.getId()).get();
+                    accountJpaRepository.delete(deletedAccount);
+                    return ResponseEntity.created(null).build();
+                }
+            }
+            throw new AccountNotFoundException("Acc no: "+accountNumber);
+        }
+    }
+
+
 }

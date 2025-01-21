@@ -1,10 +1,13 @@
 package com.mahin.banking.exception;
 
+import com.mahin.banking.exception.account.AccountNotFoundException;
+import com.mahin.banking.exception.account.DuplicateAccountNumberException;
 import com.mahin.banking.exception.customer.CustomerNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,7 +22,7 @@ import java.util.List;
 public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity handleAllException(Exception ex, WebRequest request){
+    public ResponseEntity handleAllException(Exception ex, WebRequest request) {
         System.out.println("Inside handle all exep");
         ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false),
                 LocalDateTime.now());
@@ -27,12 +30,47 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     }
 
     @ExceptionHandler(CustomerNotFoundException.class)
-    public ResponseEntity handleCustomerNotFoundException(Exception ex, WebRequest request){
+    public ResponseEntity handleCustomerNotFoundException(Exception ex, WebRequest request) {
         System.out.println("Inside customer not found exep");
         ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity(errorDetails, HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(AccountNotFoundException.class)
+    public final ResponseEntity<Object> handleAccountNotFoundException(Exception ex, WebRequest request) {
+        System.out.println("Inside account not found exception");
+        ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    //    @ExceptionHandler(HttpMessageNotReadableException.class)
+//    @Override
+//    protected ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request){
+//        System.out.println("Inside http message not readable class");
+//        ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false),
+//                LocalDateTime.now());
+//        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+//    }
+//    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+//    public ResponseEntity<Object> handleHttpMessageNotReadableException(
+//            org.springframework.http.converter.HttpMessageNotReadableException ex, WebRequest request) {
+//        ErrorDetails errorDetails = new ErrorDetails(
+//                "Malformed JSON request: " + ex.getMessage(),
+//                request.getDescription(false),
+//                LocalDateTime.now()
+//        );
+//        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+//    }
+    @ExceptionHandler(DuplicateAccountNumberException.class)
+    public final ResponseEntity<Object> handleDuplicateAccountException(Exception ex, WebRequest request) {
+        System.out.println("Inside duplicate account no exception");
+        ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
@@ -42,11 +80,10 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
 
         List<FieldError> fieldErrors = ex.getFieldErrors();
 
-        StringBuilder errorMessages=new StringBuilder();
-        for (FieldError error:fieldErrors){
+        StringBuilder errorMessages = new StringBuilder();
+        for (FieldError error : fieldErrors) {
             errorMessages.append(error.getDefaultMessage()).append(", ");
         }
-
 
 
         ErrorDetails errorDetails = new ErrorDetails("total errors: " + ex.getErrorCount() + " errors: " +

@@ -62,7 +62,7 @@ public class Account {
     }
 
     @NotNull
-    public long getBalance() {
+    public Long getBalance() {
         return balance;
     }
 
