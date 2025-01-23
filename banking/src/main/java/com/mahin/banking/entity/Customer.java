@@ -19,7 +19,7 @@ public class Customer {
     @Size(min = 2, message = "Name must contain at least 2 characters")
     private String name;
 
-    @NotNull(message = "Customer message cannot be null")
+    @NotNull(message = "Customer address cannot be null")
     @Size(min = 2, message = "address must contain at least 2 characters")
     private String address;
 

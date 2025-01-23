@@ -17,12 +17,17 @@ public class Account {
     private Long accountNumber;
 
     @NotNull
-    private long balance;
+    private Long balance;
 
     @ManyToOne
     @JsonIgnore
     @JoinColumn
     private Customer customer;
+
+    @ManyToOne
+    @JsonIgnore
+    @JoinColumn
+    private CustomerV2 customerV2;
 
     @OneToMany(mappedBy = "account")
     @JsonIgnore
@@ -57,7 +62,7 @@ public class Account {
         return accountNumber;
     }
 
-    public void setAccountNumber(@NotNull long accountNumber) {
+    public void setAccountNumber(@NotNull Long accountNumber) {
         this.accountNumber = accountNumber;
     }
 
@@ -66,7 +71,7 @@ public class Account {
         return balance;
     }
 
-    public void setBalance(@NotNull long balance) {
+    public void setBalance(@NotNull Long balance) {
         this.balance = balance;
     }
 

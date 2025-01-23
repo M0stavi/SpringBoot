@@ -2,6 +2,7 @@ package com.mahin.banking.exception;
 
 import com.mahin.banking.exception.account.AccountNotFoundException;
 import com.mahin.banking.exception.account.DuplicateAccountNumberException;
+import com.mahin.banking.exception.card.CardNotFoundException;
 import com.mahin.banking.exception.customer.CustomerNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -45,24 +46,6 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    //    @ExceptionHandler(HttpMessageNotReadableException.class)
-//    @Override
-//    protected ResponseEntity<Object> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex, WebRequest request){
-//        System.out.println("Inside http message not readable class");
-//        ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false),
-//                LocalDateTime.now());
-//        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-//    }
-//    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
-//    public ResponseEntity<Object> handleHttpMessageNotReadableException(
-//            org.springframework.http.converter.HttpMessageNotReadableException ex, WebRequest request) {
-//        ErrorDetails errorDetails = new ErrorDetails(
-//                "Malformed JSON request: " + ex.getMessage(),
-//                request.getDescription(false),
-//                LocalDateTime.now()
-//        );
-//        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-//    }
     @ExceptionHandler(DuplicateAccountNumberException.class)
     public final ResponseEntity<Object> handleDuplicateAccountException(Exception ex, WebRequest request) {
         System.out.println("Inside duplicate account no exception");
@@ -71,6 +54,13 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(CardNotFoundException.class)
+    public final ResponseEntity<Object> handleCardNotFoundException(Exception ex, WebRequest request){
+        System.out.println("Inside card not found exception");
+        ErrorDetails errorDetails = new ErrorDetails(ex.getMessage(), request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers,
