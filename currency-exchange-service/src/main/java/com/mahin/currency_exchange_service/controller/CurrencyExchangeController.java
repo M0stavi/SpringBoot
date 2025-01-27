@@ -13,6 +13,8 @@ import javax.swing.*;
 @RestController
 public class CurrencyExchangeController {
 
+//    http://localhost:8000/currency-exchange/from/USD/to/INR
+
     @Autowired
     private CurrencyExchangeJpaRepository exchangeJpaRepository;
 
