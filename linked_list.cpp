@@ -1,95 +1,63 @@
 // Online C++ compiler to run C++ program online
-#include <bits/stdc++.h>
-#include<iostream>
+#include <iostream>
+#include<bits/stdc++.h>
+#include <cstdio>
 
-struct Node{
-    int data;
-    Node* next;
-};
+using namespace std;
 
-void insertAtBegin(Node** head, int value){
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data = value;
-    newNode->next=*head;
-    *head=newNode;
+
+
+int vis[20015], col[20015],mn,mx,rd,gn;
+vector<int> adj[20015];
+
+void dfs(ll u) {
+    vis[u] = true;
+    if(col[u] == 1) rd++;
+    else gn++;
+
+    for (ll v : adj[u]) {
+        if (!vis[v]) {
+            if(col[u] == 1) col[v]=2;
+            else col[v]=1;
+            dfs(v);
+        }
+    }
 }
-
-void insertAtEnd(Node** head, int value){
-    struct Node *newNode = (struct Node*)malloc(sizeof(struct Node));
-    newNode->data=value;
-    newNode->next=NULL;
-    if(*head == NULL){
-        *head=newNode;
-        return;
-    }
-    
-    struct Node* tmp = *head;
-    while(tmp->next != NULL){
-        tmp=tmp->next;
-    }
-    tmp->next=newNode;
-}
-
-void deleteNode(Node** head, int value){
-    struct Node *tem = *head, *prev=NULL;
-    if(tem->data == value){
-        *head = tem->next;
-        free(tem);
-        return;
-    }
-    
-    while(tem->next != NULL && tem->data != value){
-        prev=tem;
-        tem=tem->next;
-    }
-    if(tem->data == value){
-        prev->next=tem->next;
-        free(tem);
-    }
-    
-}
-
-void display(Node* head){
-    struct Node* tem = head;
-    while(tem->next!=NULL){
-        std::cout << tem->data << " ";
-        tem=tem->next;
-    }
-    std::cout << tem->data << std::endl;
-}
-
-
 
 int main() {
-    
-    struct Node* head = NULL;
-    insertAtEnd(&head, 5);
-    insertAtEnd(&head, 4);
-    insertAtEnd(&head, 3);
-    insertAtEnd(&head, 2);
-    
-    display(head);
-    
-    insertAtBegin(&head, 1);
-    
-    display(head);
-    
-    deleteNode(&head, 1);
-    
-    display(head);
-    
-    deleteNode(&head, 3);
-    
-    display(head);
-    
-    deleteNode(&head, 2);
-    
-    display(head);
-    
-    deleteNode(&head, 1);
-    
-    display(head);
-    
+    int tc=1, mtc;
+    // cin >> tc;
+    while(tc--){
+        memset(vis, 0, sizeof(vis));
+        memset(col, 0, sizeof(col));
+        mn=300000;
+        mx=-1;
+        rd=0;
+        gn=0;
+        for(int i=0;i<20015;i++)  adj[i].clear();
+        cin >> mtc;
+        while(mtc--){
+            int u,v;
+            cin >> u >> v;
+            adj[u].push_back(v);
+            adj[v].push_back(u);
+            int xxx=min(u,v);
+            mn=min(xxx,mn);
+            int yyy=max(u,v);
+            mx=max(mx,yyy);
+        }
+        
+        for(int i=mn;i<=mx;i++){
+            if(vis[i]) continue;
+            vis[i]=1;
+            col[i]=1;
+            dfs(i);
+        }
+        
+        int ans=max(rd,gn);
+        cout << ans << endl;
+        
+    }
 
     return 0;
 }
